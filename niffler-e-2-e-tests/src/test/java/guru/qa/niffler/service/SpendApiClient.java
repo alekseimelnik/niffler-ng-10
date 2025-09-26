@@ -9,6 +9,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import java.io.IOException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -48,4 +49,29 @@ public class SpendApiClient implements SpendClient{
       assertEquals(200, response.code());
       return response.body();
   }
+
+    @Override
+    public SpendJson getSpendById(String id) {
+        return null;
+    }
+
+    @Override
+    public List<SpendJson> getAllSpendsByUsername(String username) {
+        return List.of();
+    }
+
+    @Override
+    public List<SpendJson> getAllSpendsByUsername(String username, String filterCurrency) {
+        return List.of();
+    }
+
+    @Override
+    public void deleteSpendById(String id) {
+
+    }
+
+    @Override
+    public void deleteSpendByIds(List<String> ids) {
+
+    }
 }

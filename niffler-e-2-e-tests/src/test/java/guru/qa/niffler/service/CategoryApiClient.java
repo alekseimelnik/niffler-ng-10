@@ -11,6 +11,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,7 +41,34 @@ public class CategoryApiClient implements CategoryClient{
       return response.body();
   }
 
-  @Override
+    @Override
+    public CategoryJson updateCategory(CategoryJson category) {
+        final Response<CategoryJson> response;
+        try {
+            response = categoryApi.updateCategory(category)
+                    .execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(200, response.code());
+        return response.body();
+    }
+
+    @Override
+    public List<CategoryJson> getAllCategoriesByUsername(String username, boolean excludeArchived) {
+        final Response<CategoryJson[]> response;
+        try {
+            response = categoryApi.getAllCategoriesByUsername(username, excludeArchived)
+                    .execute();
+            } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(200, response.code());
+        assert response.body() != null;
+        return Arrays.asList(response.body());
+    }
+
+    @Override
   public Optional<CategoryJson> findCategoryByNameAndUsername(String categoryName, String username) {
     throw new UnsupportedOperationException("Not implemented :(");
   }
