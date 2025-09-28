@@ -9,4 +9,12 @@ public class DataUtils {
     public static String getRandomCategoryName() {
         return faker.commerce().department();
     }
+
+    public static String getRandomUserName() {
+        return faker.name().username();
+    }
+
+    public static String getRandomPassword() {
+        return faker.internet().password(3, 12, true, true, true);
+    }
 }

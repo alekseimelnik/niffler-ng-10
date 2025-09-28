@@ -20,5 +20,5 @@ public interface SpendClient {
 
     void deleteSpendById(String id);
 
-    void deleteSpendByIds(List<String> ids);
+    void deleteSpendByIds(String username, List<String> ids);
 }

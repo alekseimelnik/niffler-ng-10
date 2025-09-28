@@ -10,68 +10,108 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
+import static org.apache.hc.core5.http.HttpStatus.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SpendApiClient implements SpendClient{
+public class SpendApiClient implements SpendClient {
 
-  private static final Config CFG = Config.getInstance();
+    private static final Config CFG = Config.getInstance();
 
-  private final Retrofit retrofit = new Retrofit.Builder()
-      .baseUrl(CFG.spendUrl())
-      .addConverterFactory(JacksonConverterFactory.create())
-      .build();
+    private final Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl(CFG.spendUrl())
+            .addConverterFactory(JacksonConverterFactory.create())
+            .build();
 
-  private final SpendApi spendApi = retrofit.create(SpendApi.class);
+    private final SpendApi spendApi = retrofit.create(SpendApi.class);
 
-  @Override
-  public SpendJson createSpend(SpendJson spend) {
-      final Response<SpendJson> response;
-      try {
+    @Override
+    public SpendJson createSpend(SpendJson spend) {
+        final Response<SpendJson> response;
+        try {
             response = spendApi.createSpend(spend)
                     .execute();
         } catch (IOException e) {
             throw new AssertionError(e);
-      }
-    assertEquals(200, response.code());
-    return response.body();
-  }
+        }
+        assertEquals(SC_CREATED, response.code());
+        return response.body();
+    }
 
-  @Override
-  public SpendJson updateSpend(SpendJson spend) {
-      final Response<SpendJson> response;
-      try {
-          response = spendApi.updateSpend(spend)
-                  .execute();
-      } catch (IOException e) {
-          throw new AssertionError(e);
-      }
-      assertEquals(200, response.code());
-      return response.body();
-  }
+    @Override
+    public SpendJson updateSpend(SpendJson spend) {
+        final Response<SpendJson> response;
+        try {
+            response = spendApi.updateSpend(spend)
+                    .execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(SC_OK, response.code());
+        return response.body();
+    }
 
     @Override
     public SpendJson getSpendById(String id) {
-        return null;
+        final Response<SpendJson> response;
+        try {
+            response = spendApi.getSpendById(id)
+                    .execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(SC_OK, response.code());
+        return response.body();
     }
 
     @Override
     public List<SpendJson> getAllSpendsByUsername(String username) {
-        return List.of();
+        final Response<SpendJson[]> response;
+        try {
+            response = spendApi.getAllSpendsByUsername(username)
+                    .execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(SC_OK, response.code());
+        return List.of(Objects.requireNonNullElseGet(response.body(), () -> new SpendJson[0]));
     }
 
     @Override
     public List<SpendJson> getAllSpendsByUsername(String username, String filterCurrency) {
-        return List.of();
+        final Response<SpendJson[]> response;
+        try {
+            response = spendApi.getAllSpendsByUsername(username, filterCurrency)
+                    .execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(SC_OK, response.code());
+        return List.of(Objects.requireNonNullElseGet(response.body(), () -> new SpendJson[0]));
     }
 
     @Override
     public void deleteSpendById(String id) {
-
+        final Response<Void> response;
+        try {
+            response = spendApi.deleteSpendById(id)
+                    .execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(SC_ACCEPTED, response.code());
     }
 
     @Override
-    public void deleteSpendByIds(List<String> ids) {
-
+    public void deleteSpendByIds(String username, List<String> ids) {
+        final Response<Void> response;
+        try {
+            response = spendApi.deleteSpendByIds(username, ids)
+                    .execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(SC_ACCEPTED, response.code());
     }
 }

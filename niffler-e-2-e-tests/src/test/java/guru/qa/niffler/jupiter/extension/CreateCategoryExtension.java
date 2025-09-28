@@ -31,7 +31,7 @@ public class CreateCategoryExtension implements
                             annotation.archived()
                     )
             );
-            if (annotation.archived()){
+            if (annotation.archived()) {
                 CategoryJson archivedCategory = new CategoryJson(
                         created.id(),
                         created.name(),
