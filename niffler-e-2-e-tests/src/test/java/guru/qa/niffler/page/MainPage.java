@@ -35,7 +35,7 @@ public class MainPage {
     return this;
   }
 
-  public MainPage checkTheMainPageIsLoaded() {
+  public MainPage checkThatMainPageIsLoaded() {
     spendingTable.shouldBe(visible);
     menuBtn.shouldBe(visible);
     return this;
