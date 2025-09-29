@@ -9,52 +9,50 @@ import guru.qa.niffler.page.LoginPage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @WebTest
 public class CategoryArchiveTest {
 
-    private static final Config CFG = Config.getInstance();
-    private LoginPage loginPage;
+  private static final Config CFG = Config.getInstance();
+  private LoginPage loginPage;
 
-    @BeforeEach
-    void setUp() {
-        loginPage = Selenide.open(CFG.frontUrl(), LoginPage.class);
-    }
+  @BeforeEach
+  void setUp() {
+    loginPage = Selenide.open(CFG.frontUrl(), LoginPage.class);
+  }
 
-    @Category(
-            username = "duck",
-            archived = true
-    )
-    @Test
-    void archivedCategoryShouldNotBePresentedInActiveCategoryList(CategoryJson category) {
-        loginPage
-                .login("duck", "12345")
-                .goToProfilePage()
-                .checkThatProfilePageIsLoaded()
-                .checkCategoryIsNotDisplayed(category.name());
-    }
+  @Category(
+      username = "duck",
+      archived = true
+  )
+  @Test
+  void archivedCategoryShouldNotBePresentedInActiveCategoryList(CategoryJson category) {
+    loginPage
+        .login("duck", "12345")
+        .goToProfilePage()
+        .checkThatProfilePageIsLoaded()
+        .checkCategoryIsNotDisplayed(category.name());
+  }
 
-    @Category(username = "duck")
-    @Test
-    void activeCategoryShouldPresentInCategoryList(CategoryJson category) {
-        loginPage
-                .login("duck", "12345")
-                .goToProfilePage()
-                .checkThatProfilePageIsLoaded()
-                .checkCategoryIsDisplayed(category.name());
-    }
+  @Category(username = "duck")
+  @Test
+  void activeCategoryShouldPresentInCategoryList(CategoryJson category) {
+    loginPage
+        .login("duck", "12345")
+        .goToProfilePage()
+        .checkThatProfilePageIsLoaded()
+        .checkCategoryIsDisplayed(category.name());
+  }
 
-    @Category(
-            username = "duck",
-            archived = true
-    )
-    @Test
-    void archivedCategoryShouldBePresentedInArchivedList(CategoryJson category) {
-        loginPage
-                .login("duck", "12345")
-                .goToProfilePage()
-                .checkThatProfilePageIsLoaded()
-                .checkArchivedCategoryExists(category.name());
-    }
+  @Category(
+      username = "duck",
+      archived = true
+  )
+  @Test
+  void archivedCategoryShouldBePresentedInArchivedList(CategoryJson category) {
+    loginPage
+        .login("duck", "12345")
+        .goToProfilePage()
+        .checkThatProfilePageIsLoaded()
+        .checkArchivedCategoryExists(category.name());
+  }
 }

@@ -9,86 +9,86 @@ import org.junit.jupiter.api.Test;
 
 import static guru.qa.niffler.utils.DataUtils.getRandomPassword;
 import static guru.qa.niffler.utils.DataUtils.getRandomUserName;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @WebTest
 public class RegistrationTest {
 
-    private static final Config CFG = Config.getInstance();
-    private LoginPage loginPage;
+  private static final Config CFG = Config.getInstance();
+  private LoginPage loginPage;
 
-    @BeforeEach
-    void setUp() {
-        loginPage = Selenide.open(CFG.frontUrl(), LoginPage.class);
-    }
+  @BeforeEach
+  void setUp() {
+    loginPage = Selenide.open(CFG.frontUrl(), LoginPage.class);
+  }
 
-    @Test
-    void shouldRegisterNewUser() {
-        loginPage
-                .goToRegistrationPage()
-                .checkThatPageIsLoaded()
-                .fillAndSubmitSuccessRegistration(getRandomUserName(), getRandomPassword())
-                .checkThatLoginPageIsLoaded();
-    }
+  @Test
+  void shouldRegisterNewUser() {
+    loginPage
+        .goToRegistrationPage()
+        .checkThatPageIsLoaded()
+        .fillAndSubmitSuccessRegistration(getRandomUserName(), getRandomPassword())
+        .checkThatLoginPageIsLoaded();
+  }
 
-    @Test
-    void shouldNotRegisterWithExistingUserName() {
-        String username = getRandomUserName();
-        String password = getRandomPassword();
-        String errorMessage = "Username `" + username + "` already exists";
+  @Test
+  void shouldNotRegisterWithExistingUserName() {
+    String username = getRandomUserName();
+    String password = getRandomPassword();
+    String errorMessage = "Username `" + username + "` already exists";
 
-        loginPage
-                .goToRegistrationPage()
-                .checkThatPageIsLoaded()
-                .fillAndSubmitSuccessRegistration(username, password)
-                .goToRegistrationPage()
-                .checkThatPageIsLoaded()
-                .setUsername(username)
-                .setPassword(password)
-                .setConfirmPassword(password)
-                .clickSignUpButton()
-                .checkThatErrorMessageIsVisible(errorMessage);
-    }
+    loginPage
+        .goToRegistrationPage()
+        .checkThatPageIsLoaded()
+        .fillAndSubmitSuccessRegistration(username, password)
+        .goToRegistrationPage()
+        .checkThatPageIsLoaded()
+        .setUsername(username)
+        .setPassword(password)
+        .setConfirmPassword(password)
+        .clickSignUpButton()
+        .checkThatErrorMessageIsVisible(errorMessage);
+  }
 
-    @Test
-    void shouldShowErrorIfPasswordAndConfirmPasswordAreNotEqual() {
-        String username = getRandomUserName();
-        String password = getRandomPassword();
-        String wrongConfirmPassword = getRandomPassword();
-        String errorMessage = "Passwords should be equal";
+  @Test
+  void shouldShowErrorIfPasswordAndConfirmPasswordAreNotEqual() {
+    String username = getRandomUserName();
+    String password = getRandomPassword();
+    String wrongConfirmPassword = getRandomPassword();
+    String errorMessage = "Passwords should be equal";
 
-        loginPage
-                .goToRegistrationPage()
-                .checkThatPageIsLoaded()
-                .setUsername(username)
-                .setPassword(password)
-                .setConfirmPassword(wrongConfirmPassword)
-                .clickSignUpButton()
-                .checkThatErrorMessageIsVisible(errorMessage);
-    }
+    loginPage
+        .goToRegistrationPage()
+        .checkThatPageIsLoaded()
+        .setUsername(username)
+        .setPassword(password)
+        .setConfirmPassword(wrongConfirmPassword)
+        .clickSignUpButton()
+        .checkThatErrorMessageIsVisible(errorMessage);
+  }
 
-    @Test
-    void mainPageShouldBeDisplayedAfterSuccessLogin() {
-        String username = getRandomUserName();
-        String password = getRandomPassword();
-        loginPage
-                .goToRegistrationPage()
-                .checkThatPageIsLoaded()
-                .fillAndSubmitSuccessRegistration(username, password)
-                .login(username, password)
-                .checkThatMainPageIsLoaded();
-    }
+  @Test
+  void mainPageShouldBeDisplayedAfterSuccessLogin() {
+    String username = getRandomUserName();
+    String password = getRandomPassword();
+    loginPage
+        .goToRegistrationPage()
+        .checkThatPageIsLoaded()
+        .fillAndSubmitSuccessRegistration(username, password)
+        .login(username, password)
+        .checkThatMainPageIsLoaded();
+  }
 
-    @Test
-    void userShouldStayOnLoginPageAfterLoginWithBadCredentials() {
-        String username = getRandomUserName();
-        String correctPassword = getRandomPassword();
-        String wrongPassword = getRandomPassword();
-        loginPage
-                .goToRegistrationPage()
-                .checkThatPageIsLoaded()
-                .fillAndSubmitSuccessRegistration(username, correctPassword)
-                .loginWithBadCredentials(username, wrongPassword)
-                .checkThatLoginPageIsLoaded();
-    }
+  @Test
+  void userShouldStayOnLoginPageAfterLoginWithBadCredentials() {
+    String username = getRandomUserName();
+    String correctPassword = getRandomPassword();
+    String wrongPassword = getRandomPassword();
+    loginPage
+        .goToRegistrationPage()
+        .checkThatPageIsLoaded()
+        .fillAndSubmitSuccessRegistration(username, correctPassword)
+        .loginWithBadCredentials(username, wrongPassword)
+        .checkThatLoginPageIsLoaded()
+        .checkErrorMessage("Неверные учетные данные пользователя");
+  }
 }
