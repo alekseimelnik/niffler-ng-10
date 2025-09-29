@@ -66,9 +66,4 @@ public class CategoryApiClient implements CategoryClient {
         assert response.body() != null;
         return Arrays.asList(response.body());
     }
-
-    @Override
-    public Optional<CategoryJson> findCategoryByNameAndUsername(String categoryName, String username) {
-        throw new UnsupportedOperationException("Not implemented :(");
-    }
 }

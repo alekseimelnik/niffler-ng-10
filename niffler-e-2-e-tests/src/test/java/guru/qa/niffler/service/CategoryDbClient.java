@@ -98,36 +98,4 @@ public class CategoryDbClient implements CategoryClient {
     public List<CategoryJson> getAllCategoriesByUsername(String username, boolean excludeArchived) {
         return List.of();
     }
-
-    @Override
-    public Optional<CategoryJson> findCategoryByNameAndUsername(String categoryName, String username) {
-        try {
-
-            final JdbcTemplate jdbcTemplate = new JdbcTemplate(
-                    new SingleConnectionDataSource(
-                            DriverManager.getConnection(
-                                    CFG.spendJdbcUrl(),
-                                    "postgres",
-                                    "secret"
-                            ),
-                            true
-                    )
-            );
-            return Optional.ofNullable(
-                    jdbcTemplate.queryForObject(
-                            "SELECT * FROM \"category\" WHERE username = ? and name = ?",
-                            (rs, rowNum) -> new CategoryJson(
-                                    rs.getObject("id", UUID.class),
-                                    rs.getString("name"),
-                                    rs.getString("username"),
-                                    rs.getBoolean("archived")
-                            ),
-                            username,
-                            categoryName
-                    )
-            );
-        } catch (Exception e) {
-            return Optional.empty();
-        }
-    }
 }

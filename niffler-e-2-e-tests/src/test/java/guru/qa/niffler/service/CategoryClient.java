@@ -13,6 +13,4 @@ public interface CategoryClient {
     CategoryJson updateCategory(CategoryJson category);
 
     List<CategoryJson> getAllCategoriesByUsername(String username, boolean excludeArchived);
-
-    Optional<CategoryJson> findCategoryByNameAndUsername(String categoryName, String username);
 }
