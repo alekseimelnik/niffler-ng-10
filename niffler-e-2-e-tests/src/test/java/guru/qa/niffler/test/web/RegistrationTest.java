@@ -47,7 +47,7 @@ public class RegistrationTest {
                 .setPassword(password)
                 .setConfirmPassword(password)
                 .clickSignUpButton()
-                .getErrorMessage(errorMessage);
+                .checkThatErrorMessageIsVisible(errorMessage);
     }
 
     @Test
@@ -64,7 +64,7 @@ public class RegistrationTest {
                 .setPassword(password)
                 .setConfirmPassword(wrongConfirmPassword)
                 .clickSignUpButton()
-                .getErrorMessage(errorMessage);
+                .checkThatErrorMessageIsVisible(errorMessage);
     }
 
     @Test
@@ -76,7 +76,7 @@ public class RegistrationTest {
                 .checkThatPageIsLoaded()
                 .fillAndSubmitSuccessRegistration(username, password)
                 .login(username, password)
-                .checkTheMainPageIsLoaded();
+                .checkThatMainPageIsLoaded();
     }
 
     @Test

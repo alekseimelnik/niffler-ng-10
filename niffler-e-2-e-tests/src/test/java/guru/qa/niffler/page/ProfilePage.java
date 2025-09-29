@@ -48,12 +48,6 @@ public class ProfilePage {
         return this;
     }
 
-    @Step("Switch to archived categories")
-    public ProfilePage switchToArchivedCategories() {
-        archivedSwitcher.click();
-        return this;
-    }
-
     @Step("Check the profile page is loaded")
     public ProfilePage checkThatProfilePageIsLoaded() {
         avatar.shouldBe(visible);

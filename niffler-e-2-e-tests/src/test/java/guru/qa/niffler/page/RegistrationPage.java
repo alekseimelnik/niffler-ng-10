@@ -63,12 +63,13 @@ public class RegistrationPage {
     }
 
     @Step("Verify error label visible")
-    public boolean verifyErrorLabelVisible() {
-        return errorLabel.shouldBe(visible).isDisplayed();
+    public RegistrationPage verifyErrorLabelVisible() {
+        errorLabel.shouldBe(visible).isDisplayed();
+        return this;
     }
 
     @Step("Get error message: '{message}'")
-    public RegistrationPage getErrorMessage(String message) {
+    public RegistrationPage checkThatErrorMessageIsVisible(String message) {
         errorLabel.shouldHave(visible).shouldHave(text(message));
         return this;
     }
