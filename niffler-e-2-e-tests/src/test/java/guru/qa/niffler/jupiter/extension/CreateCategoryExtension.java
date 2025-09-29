@@ -23,7 +23,7 @@ public class CreateCategoryExtension implements
                 context.getRequiredTestMethod(),
                 Category.class
         ).ifPresent(annotation -> {
-            final CategoryJson created = categoryClient.createCategory(
+            CategoryJson created = categoryClient.createCategory(
                     new CategoryJson(
                             null,
                             getRandomCategoryName(),
@@ -38,7 +38,7 @@ public class CreateCategoryExtension implements
                         created.username(),
                         true
                 );
-                categoryClient.updateCategory(archivedCategory);
+                created = categoryClient.updateCategory(archivedCategory);
             }
             context.getStore(NAMESPACE).put(
                     context.getUniqueId(),
