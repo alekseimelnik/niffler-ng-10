@@ -2,6 +2,7 @@ package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.config.Config;
+import guru.qa.niffler.jupiter.annotation.DisabledByIssue;
 import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
 import guru.qa.niffler.model.CurrencyValues;
@@ -22,6 +23,7 @@ public class SpendingTest {
       currency = CurrencyValues.RUB,
       description = "Обучение Niffler 2.0 юбилейный поток!"
   )
+  @DisabledByIssue("4")
   @Test
   void spendingDescriptionShouldBeEditedByTableAction(SpendJson spending) {
     final String newDescription = "Обучение Niffler Next Generation";
