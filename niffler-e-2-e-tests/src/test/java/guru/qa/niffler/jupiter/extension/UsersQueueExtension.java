@@ -1,16 +1,17 @@
 package guru.qa.niffler.jupiter.extension;
 
-import io.qameta.allure.Allure;
+import guru.qa.niffler.jupiter.annotation.UserType;
+import guru.qa.niffler.model.StaticUser;
+import java.lang.reflect.Parameter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -21,77 +22,102 @@ public class UsersQueueExtension implements
     AfterTestExecutionCallback,
     ParameterResolver {
 
-  public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(UsersQueueExtension.class);
+  public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(
+      UsersQueueExtension.class);
 
-  public record StaticUser(String username, String password, boolean empty) {
-  }
-
-  private static final Queue<StaticUser> EMPTY_USERS = new ConcurrentLinkedQueue<>();
-  private static final Queue<StaticUser> NOT_EMPTY_USERS = new ConcurrentLinkedQueue<>();
+  private static final Map<UserType.FriendType, Queue<StaticUser>> USERS = new ConcurrentHashMap<>();
 
   static {
-    EMPTY_USERS.add(new StaticUser("bee", "12345", true));
-    NOT_EMPTY_USERS.add(new StaticUser("duck", "12345", false));
-    NOT_EMPTY_USERS.add(new StaticUser("dima", "12345", false));
-  }
+    USERS.put(UserType.FriendType.EMPTY,
+        new ConcurrentLinkedQueue<>(
+            List.of(new StaticUser("bee", "12345", null, null, null))
+        ));
+    USERS.put(UserType.FriendType.WITH_FRIEND,
+        new ConcurrentLinkedQueue<>(
+            List.of(new StaticUser("duck", "12345", "dima", null, null))
+        ));
+    USERS.put(UserType.FriendType.WITH_INCOME_REQUEST,
+        new ConcurrentLinkedQueue<>(
+            List.of(new StaticUser("dima", "12345", null, "bee", null))
+        ));
+    USERS.put(UserType.FriendType.WITH_OUTCOME_REQUEST,
+        new ConcurrentLinkedQueue<>(
+            List.of(new StaticUser("barsik", "12345", null, null, "bill"))
+        ));
 
-  @Target(ElementType.PARAMETER)
-  @Retention(RetentionPolicy.RUNTIME)
-  public @interface UserType {
-    boolean empty() default true;
   }
 
   @Override
   public void beforeTestExecution(ExtensionContext context) {
-    Arrays.stream(context.getRequiredTestMethod().getParameters())
+    List<Parameter> testMethods = Arrays.stream(
+            context.getRequiredTestMethod().getParameters())
         .filter(p -> AnnotationSupport.isAnnotated(p, UserType.class))
-        .findFirst()
-        .map(p -> p.getAnnotation(UserType.class))
-        .ifPresent(ut -> {
-          Optional<StaticUser> user = Optional.empty();
-          StopWatch sw = StopWatch.createStarted();
-          while (user.isEmpty() && sw.getTime(TimeUnit.SECONDS) < 30) {
-            user = ut.empty()
-                ? Optional.ofNullable(EMPTY_USERS.poll())
-                : Optional.ofNullable(NOT_EMPTY_USERS.poll());
-          }
-          Allure.getLifecycle().updateTestCase(testCase ->
-              testCase.setStart(new Date().getTime())
-          );
-          user.ifPresentOrElse(
-              u ->
-                  context.getStore(NAMESPACE).put(
-                      context.getUniqueId(),
-                      u
-                  ),
-              () -> {
-                throw new IllegalStateException("Can`t obtain user after 30s.");
-              }
-          );
-        });
-  }
+        .toList();
 
-  @Override
-  public void afterTestExecution(ExtensionContext context) {
-    StaticUser user = context.getStore(NAMESPACE).get(
-        context.getUniqueId(),
-        StaticUser.class
-    );
-    if (user.empty()) {
-      EMPTY_USERS.add(user);
-    } else {
-      NOT_EMPTY_USERS.add(user);
+    Map<UserType.FriendType, StaticUser> users = new HashMap<>();
+
+    for (Parameter parameter : testMethods) {
+      UserType.FriendType friendType = parameter.getAnnotation(UserType.class).value();
+      if (users.containsKey(friendType)) {
+        continue;
+      }
+
+      Optional<StaticUser> testUser = Optional.empty();
+
+      Queue<StaticUser> queue = USERS.get(friendType);
+      if (queue == null) {
+        throw new IllegalStateException("No users for type: " + friendType);
+      }
+
+      StopWatch sw = StopWatch.createStarted();
+      while (testUser.isEmpty() && sw.getTime(TimeUnit.SECONDS) < 30) {
+        testUser = Optional.ofNullable(queue.poll());
+      }
+      StaticUser staticUser = testUser.orElseThrow(
+          () -> new IllegalStateException("Can't obtain user for type " + friendType + " after 30s")
+      );
+      users.put(friendType, staticUser);
+    }
+
+    if (!users.isEmpty()) {
+      context.getStore(NAMESPACE).put(context.getUniqueId(), users);
     }
   }
 
   @Override
-  public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+  public void afterTestExecution(ExtensionContext context) {
+    Map<UserType.FriendType, StaticUser> users = context.getStore(NAMESPACE).get(
+        context.getUniqueId(),
+        Map.class
+    );
+    if (users == null || users.isEmpty()) {
+      return;
+    }
+    for (
+        Map.Entry<UserType.FriendType, StaticUser> user : users.entrySet()
+    ) {
+      Queue<StaticUser> queue = USERS.get(user.getKey());
+      if (queue != null) {
+        queue.add(user.getValue());
+      }
+    }
+  }
+
+  @Override
+  public boolean supportsParameter(ParameterContext parameterContext,
+      ExtensionContext extensionContext) throws ParameterResolutionException {
     return parameterContext.getParameter().getType().isAssignableFrom(StaticUser.class)
         && AnnotationSupport.isAnnotated(parameterContext.getParameter(), UserType.class);
   }
 
   @Override
-  public StaticUser resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-    return extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), StaticUser.class);
+  public StaticUser resolveParameter(ParameterContext parameterContext,
+      ExtensionContext extensionContext) throws ParameterResolutionException {
+    return (StaticUser) extensionContext.getStore(NAMESPACE)
+        .get(extensionContext.getUniqueId(), Map.class)
+        .get(parameterContext.getParameter()
+            .getAnnotation(UserType.class)
+            .value()
+        );
   }
 }
