@@ -9,12 +9,13 @@ import com.codeborne.selenide.SelenideElement;
 public class FriendsPage {
 
   private final SelenideElement
-      searchInput = $("input[aria-label='search']"),
+      searchInput = $("input[aria-label='search']").as("Search Input"),
       friendsTable = $(".MuiTable-root").as("Friends Table"),
-      peopleTab = $("a[href='/people/friends']"),
-      allTab = $("a[href='/people/all']");
+      friendsTab = $("a[href='/people/friends']").as("Friends Tab"),
+      allTab = $("a[href='/people/all']").as("All Tab");
 
-  public final ElementsCollection friendsTableRows = friendsTable.$$("tbody tr").as("Friends Table Rows");
+  public final ElementsCollection
+      friendsTableRows = friendsTable.$$("tbody tr").as("Friends Table Rows");
 
   public FriendsPage checkThatFriendsTableContains(String friend) {
     SelenideElement tbodyTr = friendsTableRows.findBy(Condition.text(friend))
