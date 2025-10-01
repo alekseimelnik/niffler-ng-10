@@ -2,7 +2,8 @@ package guru.qa.niffler.jupiter.extension;
 
 import guru.qa.niffler.jupiter.annotation.UserType;
 import guru.qa.niffler.model.StaticUser;
-import java.lang.reflect.Parameter;
+import io.qameta.allure.Allure;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,71 +35,84 @@ public class UsersQueueExtension implements
         ));
     USERS.put(UserType.FriendType.WITH_FRIEND,
         new ConcurrentLinkedQueue<>(
-            List.of(new StaticUser("duck", "12345", "dima", null, null))
+            List.of(new StaticUser("duck", "12345", "alex", null, null))
         ));
     USERS.put(UserType.FriendType.WITH_INCOME_REQUEST,
         new ConcurrentLinkedQueue<>(
-            List.of(new StaticUser("dima", "12345", null, "bee", null))
+            List.of(new StaticUser("dima", "12345", null, "barsik", null))
         ));
     USERS.put(UserType.FriendType.WITH_OUTCOME_REQUEST,
         new ConcurrentLinkedQueue<>(
-            List.of(new StaticUser("barsik", "12345", null, null, "bill"))
+            List.of(new StaticUser("barsik", "12345", null, null, "dima"))
         ));
 
   }
 
   @Override
   public void beforeTestExecution(ExtensionContext context) {
-    List<Parameter> testMethods = Arrays.stream(
-            context.getRequiredTestMethod().getParameters())
+    List<UserType.FriendType> types = Arrays.stream(context.getRequiredTestMethod().getParameters())
         .filter(p -> AnnotationSupport.isAnnotated(p, UserType.class))
+        .map(p -> p.getAnnotation(UserType.class).value())
+        .distinct()
         .toList();
 
-    Map<UserType.FriendType, StaticUser> users = new HashMap<>();
+    if (types.isEmpty()) {
+      return;
+    }
 
-    for (Parameter parameter : testMethods) {
-      UserType.FriendType friendType = parameter.getAnnotation(UserType.class).value();
-      if (users.containsKey(friendType)) {
+    Map<UserType.FriendType, StaticUser> users = (Map<UserType.FriendType, StaticUser>)
+        context.getStore(NAMESPACE).getOrComputeIfAbsent(
+            context.getUniqueId(),
+            key -> new HashMap<>()
+        );
+
+    for (UserType.FriendType type : types) {
+      if (users.containsKey(type)) {
         continue;
       }
 
-      Optional<StaticUser> testUser = Optional.empty();
-
-      Queue<StaticUser> queue = USERS.get(friendType);
+      Queue<StaticUser> queue = USERS.get(type);
       if (queue == null) {
-        throw new IllegalStateException("No users for type: " + friendType);
+        throw new IllegalStateException("No users queue configured for type: " + type);
       }
 
+      Optional<StaticUser> testUser = Optional.empty();
       StopWatch sw = StopWatch.createStarted();
+
       while (testUser.isEmpty() && sw.getTime(TimeUnit.SECONDS) < 30) {
         testUser = Optional.ofNullable(queue.poll());
       }
-      StaticUser staticUser = testUser.orElseThrow(
-          () -> new IllegalStateException("Can't obtain user for type " + friendType + " after 30s")
-      );
-      users.put(friendType, staticUser);
-    }
 
-    if (!users.isEmpty()) {
-      context.getStore(NAMESPACE).put(context.getUniqueId(), users);
+      Allure.getLifecycle().updateTestCase(testCase ->
+          testCase.setStart(new Date().getTime())
+      );
+
+      testUser.ifPresentOrElse(
+          u -> users.put(type, u),
+          () -> {
+            throw new IllegalStateException(
+                "Can't obtain user for type " + type + " after 30s"
+            );
+          }
+      );
     }
   }
 
   @Override
   public void afterTestExecution(ExtensionContext context) {
-    Map<UserType.FriendType, StaticUser> users = context.getStore(NAMESPACE).get(
+    Map<UserType.FriendType, StaticUser> map = context.getStore(NAMESPACE).get(
         context.getUniqueId(),
         Map.class
     );
-    if (users == null || users.isEmpty()) {
+    if (map == null || map.isEmpty()) {
       return;
     }
     for (
-        Map.Entry<UserType.FriendType, StaticUser> user : users.entrySet()
+        Map.Entry<UserType.FriendType, StaticUser> e : map.entrySet()
     ) {
-      Queue<StaticUser> queue = USERS.get(user.getKey());
+      Queue<StaticUser> queue = USERS.get(e.getKey());
       if (queue != null) {
-        queue.add(user.getValue());
+        queue.add(e.getValue());
       }
     }
   }
