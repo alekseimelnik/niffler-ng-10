@@ -25,6 +25,12 @@ public class MainPage {
     return new ProfilePage();
   }
 
+  public FriendsPage goToFriendsPage() {
+    menuBtn.click();
+    menuItems.find(text("Friends")).click();
+    return new FriendsPage();
+  }
+
   public EditSpendingPage editSpending(String description) {
     spendingTable.$$("tbody tr").find(text(description)).$$("td").get(5).click();
     return new EditSpendingPage();
