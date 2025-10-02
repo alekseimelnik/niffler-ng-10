@@ -8,7 +8,22 @@ package guru.qa.niffler.config;
    return "http://localhost:3000/";
   }
 
-  @Override
+   @Override
+   public String authUrl() {
+     return "";
+   }
+
+   @Override
+   public String getawayUrl() {
+     return "";
+   }
+
+   @Override
+   public String userdataUrl() {
+     return "";
+   }
+
+   @Override
   public String spendUrl() {
    return "http://localhost:8093/";
   }
