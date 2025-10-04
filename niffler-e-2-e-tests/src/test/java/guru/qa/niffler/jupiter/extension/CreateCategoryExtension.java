@@ -20,7 +20,7 @@ public class CreateCategoryExtension implements
   private final CategoryClient categoryClient = new CategoryApiClient();
 
   @Override
-  public void beforeEach(ExtensionContext context) throws Exception {
+  public void beforeEach(ExtensionContext context) {
     AnnotationSupport.findAnnotation(
         context.getRequiredTestMethod(),
         User.class
@@ -32,7 +32,7 @@ public class CreateCategoryExtension implements
                 null,
                 getRandomCategoryName(),
                 userAnnotation.username(),
-                categoryAnnotation.archived()
+                false
             )
         );
         if (categoryAnnotation.archived()) {
@@ -53,24 +53,20 @@ public class CreateCategoryExtension implements
   }
 
   @Override
-  public void afterTestExecution(ExtensionContext context) throws Exception {
-    try {
-      CategoryJson category = context.getStore(NAMESPACE)
-          .get(context.getUniqueId(), CategoryJson.class);
-      if (category == null) {
-        return;
-      }
-      if (!category.archived()) {
-        CategoryJson archivedCategory = new CategoryJson(
-            category.id(),
-            category.name(),
-            category.username(),
-            true
-        );
-        categoryClient.updateCategory(archivedCategory);
-      }
-    } catch (Exception e) {
-      System.err.println("Exception during category cleanup: " + e.getMessage());
+  public void afterTestExecution(ExtensionContext context) {
+    CategoryJson category = context.getStore(NAMESPACE)
+        .get(context.getUniqueId(), CategoryJson.class);
+    if (category == null) {
+      return;
+    }
+    if (!category.archived()) {
+      CategoryJson archivedCategory = new CategoryJson(
+          category.id(),
+          category.name(),
+          category.username(),
+          true
+      );
+      categoryClient.updateCategory(archivedCategory);
     }
   }
 
