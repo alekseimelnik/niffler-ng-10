@@ -24,9 +24,9 @@ public class FriendsTest {
     loginPage = Selenide.open(CFG.frontUrl(), LoginPage.class);
   }
 
-  @UserQueue
-  @DisplayName("Friends should be presented in friends table")
   @Test
+  @DisplayName("Friends should be presented in friends table")
+  @UserQueue
   void friendsShouldBePresentedInFriendsTable(@UserType(WITH_FRIEND) StaticUser user) {
     loginPage
         .login(user.username(), user.password())
@@ -34,9 +34,9 @@ public class FriendsTest {
         .checkThatFriendsTableContains(user.friend());
   }
 
-  @UserQueue
-  @DisplayName("Friends table should be empty for a user without friends")
   @Test
+  @DisplayName("Friends table should be empty for a user without friends")
+  @UserQueue
   void friendsTableShouldBeEmptyForNewUser(@UserType(EMPTY) StaticUser user) {
     loginPage
         .login(user.username(), user.password())
@@ -44,9 +44,9 @@ public class FriendsTest {
         .checkThatFriendsTableIsEmpty();
   }
 
-  @UserQueue
-  @DisplayName("Income invitation should be presented in friends table")
   @Test
+  @DisplayName("Income invitation should be presented in friends table")
+  @UserQueue
   void incomeInvitationBePresentedInFriendsTable(@UserType(WITH_INCOME_REQUEST) StaticUser user) {
     loginPage
         .login(user.username(), user.password())
@@ -54,9 +54,9 @@ public class FriendsTest {
         .checkThatIncomeInvitationIsPresented(user.income());
   }
 
-  @UserQueue
-  @DisplayName("Outcome invitation should be presented in friends table")
   @Test
+  @DisplayName("Outcome invitation should be presented in friends table")
+  @UserQueue
   void outcomeInvitationShouldBePresentedInFriendsTable(@UserType(WITH_OUTCOME_REQUEST) StaticUser user) {
     loginPage
         .login(user.username(), user.password())

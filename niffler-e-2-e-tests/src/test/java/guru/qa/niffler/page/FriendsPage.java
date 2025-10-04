@@ -5,6 +5,7 @@ import static com.codeborne.selenide.Selenide.$;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import io.qameta.allure.Step;
 
 public class FriendsPage {
 
@@ -17,6 +18,7 @@ public class FriendsPage {
   public final ElementsCollection
       friendsTableRows = friendsTable.$$("tbody tr").as("Friends Table Rows");
 
+  @Step("Check that friends table contains friend: {friend}")
   public FriendsPage checkThatFriendsTableContains(String friend) {
     SelenideElement tbodyTr = friendsTableRows.findBy(Condition.text(friend))
         .shouldBe(Condition.visible);
@@ -24,11 +26,13 @@ public class FriendsPage {
     return this;
   }
 
+  @Step("Check that friends table is empty")
   public FriendsPage checkThatFriendsTableIsEmpty() {
     friendsTableRows.first().shouldNotBe(Condition.visible);
     return this;
   }
 
+  @Step("Check that income invitation is presented: {friend}")
   public FriendsPage checkThatIncomeInvitationIsPresented(String friend) {
     searchInput.setValue(friend).pressEnter();
     SelenideElement tbodyTr = friendsTableRows.findBy(Condition.text(friend))
@@ -37,6 +41,7 @@ public class FriendsPage {
     return this;
   }
 
+  @Step("Check that outcome invitation is presented: {friend}")
   public FriendsPage checkThatOutcomeInvitationIsPresented(String friend) {
     allTab.click();
     searchInput.setValue(friend).pressEnter();

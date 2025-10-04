@@ -9,10 +9,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @ExtendWith(CreateCategoryExtension.class)
 public @interface Category {
-    String username();
 
-    boolean archived() default false;
+  boolean archived() default false;
 }
