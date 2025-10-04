@@ -46,3 +46,5 @@ out/
 ### Firebase ###
 /resources/firebase
 /resources/codestyle
+.DS_Store
+resources/.DS_Store
