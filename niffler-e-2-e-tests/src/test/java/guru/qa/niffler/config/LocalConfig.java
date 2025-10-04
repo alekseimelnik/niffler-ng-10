@@ -10,17 +10,17 @@ package guru.qa.niffler.config;
 
    @Override
    public String authUrl() {
-     return "";
+     return "http://localhost:9000";
    }
 
    @Override
    public String getawayUrl() {
-     return "";
+     return "http://localhost:8090";
    }
 
    @Override
    public String userdataUrl() {
-     return "";
+     return "http://localhost:8089";
    }
 
    @Override
