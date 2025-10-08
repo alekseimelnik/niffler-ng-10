@@ -10,7 +10,7 @@ public interface Config {
 
   String authUrl();
 
-  String getawayUrl();
+  String gatewayUrl();
 
   String userdataUrl();
 
