@@ -16,14 +16,14 @@ public class LoginTest {
   @Test
   void mainPageShouldBeDisplayedAfterSuccessLogin() {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
-        .successLogin("duck", "12345")
+        .login("duck", "12345")
         .checkThatPageLoaded();
   }
 
   @Test
   void userShouldStayOnLoginPageAfterLoginWithBadCredentials() {
     LoginPage loginPage = Selenide.open(CFG.frontUrl(), LoginPage.class);
-    loginPage.fillLoginPage(randomUsername(), "BAD");
-    loginPage.checkError("Bad credentials");
+    loginPage.login(randomUsername(), "BAD");
+    loginPage.checkErrorMessage("Bad credentials");
   }
 }
