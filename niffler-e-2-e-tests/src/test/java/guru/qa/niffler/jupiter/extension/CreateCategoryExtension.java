@@ -3,8 +3,8 @@ package guru.qa.niffler.jupiter.extension;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.CategoryJson;
-import guru.qa.niffler.service.CategoryApiClient;
 import guru.qa.niffler.service.CategoryClient;
+import guru.qa.niffler.service.CategoryDbClient;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 
@@ -17,7 +17,7 @@ public class CreateCategoryExtension implements
 
   public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(
       CreateCategoryExtension.class);
-  private final CategoryClient categoryClient = new CategoryApiClient();
+  private final CategoryClient categoryClient = new CategoryDbClient();
 
   @Override
   public void beforeEach(ExtensionContext context) {
