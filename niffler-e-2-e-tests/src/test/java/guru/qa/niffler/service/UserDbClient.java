@@ -21,22 +21,14 @@ public class UserDbClient implements UserClient {
 
   @Override
   public Optional<UserJson> findById(UUID id) {
-    if (id == null) {
-      return Optional.empty();
-    } else {
-      return userDao.findById(id)
-          .map(UserJson::fromEntity);
-    }
+    return userDao.findById(id)
+        .map(UserJson::fromEntity);
   }
 
   @Override
   public Optional<UserJson> findByUsername(String username) {
-    if (username == null) {
-      return Optional.empty();
-    } else {
-      return userDao.findByUsername(username)
-          .map(UserJson::fromEntity);
-    }
+    return userDao.findByUsername(username)
+        .map(UserJson::fromEntity);
   }
 
   @Override
