@@ -1,50 +1,41 @@
 package guru.qa.niffler.service;
 
-import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.UserDao;
 import guru.qa.niffler.data.dao.impl.UserDaoJdbc;
 import guru.qa.niffler.data.entity.spend.UserEntity;
 import guru.qa.niffler.model.UserJson;
-import java.util.List;
 import java.util.Optional;
-import javax.annotation.Nullable;
+import java.util.UUID;
 
 public class UserDbClient implements UserClient {
-
-  private static final Config CFG = Config.getInstance();
 
   private UserDao userDao = new UserDaoJdbc();
 
   @Override
   public UserJson createUser(UserJson user) {
     UserEntity userEntity = UserEntity.fromJson(user);
-    if (userEntity.getId() == null) {
-      userEntity.setUsername(userEntity.getUsername());
-    }
     return UserJson.fromEntity(
         userDao.createUser(userEntity)
     );
   }
 
   @Override
-  public Optional<UserJson> findById(UserJson id) {
+  public Optional<UserJson> findById(UUID id) {
     if (id == null) {
       return Optional.empty();
     } else {
-      return Optional.of(
-      userDao.findById(UserEntity.fromJson(id))
-          .map(userEntity -> UserJson.fromEntity(userEntity)).orElseThrow());
+      return userDao.findById(id)
+          .map(UserJson::fromEntity);
     }
   }
 
   @Override
-  public Optional<UserJson> findByUsername(UserJson username) {
+  public Optional<UserJson> findByUsername(String username) {
     if (username == null) {
       return Optional.empty();
     } else {
-      return Optional.of(
-          userDao.findByUsername(UserEntity.fromJson(username))
-              .map(userEntity -> UserJson.fromEntity(userEntity)).orElseThrow());
+      return userDao.findByUsername(username)
+          .map(UserJson::fromEntity);
     }
   }
 
