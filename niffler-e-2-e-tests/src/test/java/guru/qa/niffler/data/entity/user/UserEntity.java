@@ -1,7 +1,7 @@
-package guru.qa.niffler.data.entity.spend;
+package guru.qa.niffler.data.entity.user;
 
-import guru.qa.niffler.model.CurrencyValues;
-import guru.qa.niffler.model.UserJson;
+import guru.qa.niffler.model.spend.CurrencyValues;
+import guru.qa.niffler.model.user.UserJson;
 import java.io.Serializable;
 import java.util.UUID;
 import lombok.Getter;

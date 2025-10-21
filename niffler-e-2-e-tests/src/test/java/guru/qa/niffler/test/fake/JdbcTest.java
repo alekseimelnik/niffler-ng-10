@@ -1,8 +1,8 @@
 package guru.qa.niffler.test.fake;
 
-import guru.qa.niffler.model.CategoryJson;
-import guru.qa.niffler.model.CurrencyValues;
-import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.model.spend.CategoryJson;
+import guru.qa.niffler.model.spend.CurrencyValues;
+import guru.qa.niffler.model.spend.SpendJson;
 import guru.qa.niffler.service.SpendDbClient;
 import java.util.Date;
 import org.junit.jupiter.api.Disabled;

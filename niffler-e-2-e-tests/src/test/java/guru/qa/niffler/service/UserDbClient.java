@@ -4,8 +4,9 @@ import static guru.qa.niffler.data.Databases.transaction;
 
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.impl.UserDaoJdbc;
-import guru.qa.niffler.data.entity.spend.UserEntity;
-import guru.qa.niffler.model.UserJson;
+import guru.qa.niffler.data.entity.user.UserEntity;
+import guru.qa.niffler.model.user.UserJson;
+import guru.qa.niffler.service.impl.UserClient;
 import java.util.Optional;
 import java.util.UUID;
 

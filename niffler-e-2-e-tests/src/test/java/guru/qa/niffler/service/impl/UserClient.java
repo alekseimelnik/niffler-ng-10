@@ -1,6 +1,6 @@
-package guru.qa.niffler.service;
+package guru.qa.niffler.service.impl;
 
-import guru.qa.niffler.model.UserJson;
+import guru.qa.niffler.model.user.UserJson;
 import java.util.Optional;
 import java.util.UUID;
 
