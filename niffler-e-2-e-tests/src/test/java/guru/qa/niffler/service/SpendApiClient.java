@@ -2,9 +2,10 @@ package guru.qa.niffler.service;
 
 import guru.qa.niffler.api.SpendApi;
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.model.CategoryJson;
-import guru.qa.niffler.model.CurrencyValues;
-import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.model.spend.CategoryJson;
+import guru.qa.niffler.model.spend.CurrencyValues;
+import guru.qa.niffler.model.spend.SpendJson;
+import guru.qa.niffler.service.impl.SpendClient;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
@@ -15,7 +16,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SpendApiClient implements SpendClient{
+public class SpendApiClient implements SpendClient {
 
   private static final Config CFG = Config.getInstance();
 

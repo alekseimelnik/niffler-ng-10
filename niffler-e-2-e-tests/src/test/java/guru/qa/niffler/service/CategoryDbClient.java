@@ -1,7 +1,8 @@
 package guru.qa.niffler.service;
 
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.model.CategoryJson;
+import guru.qa.niffler.model.spend.CategoryJson;
+import guru.qa.niffler.service.impl.CategoryClient;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;

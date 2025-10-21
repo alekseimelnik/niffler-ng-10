@@ -1,7 +1,7 @@
-package guru.qa.niffler.service;
+package guru.qa.niffler.service.impl;
 
-import guru.qa.niffler.model.CategoryJson;
-import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.model.spend.CategoryJson;
+import guru.qa.niffler.model.spend.SpendJson;
 
 public interface SpendClient {
 

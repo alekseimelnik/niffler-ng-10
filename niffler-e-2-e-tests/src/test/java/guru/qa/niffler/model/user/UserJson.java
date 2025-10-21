@@ -1,7 +1,7 @@
-package guru.qa.niffler.model;
+package guru.qa.niffler.model.user;
 
-import guru.qa.niffler.data.entity.spend.CategoryEntity;
-import guru.qa.niffler.data.entity.spend.UserEntity;
+import guru.qa.niffler.data.entity.user.UserEntity;
+import guru.qa.niffler.model.spend.CurrencyValues;
 
 public record UserJson (
     String username,

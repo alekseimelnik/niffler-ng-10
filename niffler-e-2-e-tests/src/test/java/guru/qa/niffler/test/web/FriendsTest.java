@@ -7,7 +7,7 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.UserQueue;
 import guru.qa.niffler.jupiter.annotation.UserType;
 import guru.qa.niffler.jupiter.annotation.WebTest;
-import guru.qa.niffler.model.StaticUser;
+import guru.qa.niffler.model.user.StaticUser;
 import guru.qa.niffler.page.LoginPage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -9,7 +9,6 @@ import java.util.Properties;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import org.apache.commons.lang3.StringUtils;
-import org.postgresql.ds.PGSimpleDataSource;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -34,10 +33,16 @@ public class Databases {
   }
 
   public static <T> T transaction(Function<Connection, T> function, String jdbcUrl) {
+    return transaction(function, jdbcUrl, Connection.TRANSACTION_REPEATABLE_READ);
+  }
+
+  public static <T> T transaction(Function<Connection, T> function, String jdbcUrl,
+      int isolationLevel) {
     Connection connection = null;
     try {
       connection = connection(jdbcUrl);
       connection.setAutoCommit(false);
+      connection.setTransactionIsolation(isolationLevel);
       T result = function.apply(connection);
       connection.commit();
       connection.setAutoCommit(true);
@@ -56,12 +61,18 @@ public class Databases {
   }
 
   public static <T> T xaTransaction(XaFunction<T>... actions) {
+    return xaTransaction(Connection.TRANSACTION_REPEATABLE_READ, actions);
+  }
+
+  public static <T> T xaTransaction(int isolationLevel, XaFunction<T>... actions) {
     UserTransaction ut = new UserTransactionImp();
     try {
       ut.begin();
       T result = null;
       for (XaFunction<T> action : actions) {
-        result = action.function.apply(connection(action.jdbcUrl));
+        Connection conn = connection(action.jdbcUrl);
+        conn.setTransactionIsolation(isolationLevel);
+        result = action.function.apply(conn);
       }
       ut.commit();
       return result;
@@ -77,10 +88,16 @@ public class Databases {
 
 
   public static void transaction(Consumer<Connection> consumer, String jdbcUrl) {
+    transaction(consumer, jdbcUrl, Connection.TRANSACTION_REPEATABLE_READ);
+  }
+
+  public static void transaction(Consumer<Connection> consumer, String jdbcUrl,
+      int isolationLevel) {
     Connection connection = null;
     try {
       connection = connection(jdbcUrl);
       connection.setAutoCommit(false);
+      connection.setTransactionIsolation(isolationLevel);
       consumer.accept(connection);
       connection.commit();
       connection.setAutoCommit(true);
@@ -98,11 +115,17 @@ public class Databases {
   }
 
   public static void xaTransaction(XaConsumer... actions) {
+    xaTransaction(Connection.TRANSACTION_REPEATABLE_READ, actions);
+  }
+
+  public static void xaTransaction(int isolationLevel, XaConsumer... actions) {
     UserTransaction ut = new UserTransactionImp();
     try {
       ut.begin();
       for (XaConsumer action : actions) {
-        action.function.accept(connection(action.jdbcUrl));
+        Connection conn = connection(action.jdbcUrl);
+        conn.setTransactionIsolation(isolationLevel);
+        action.function.accept(conn);
       }
       ut.commit();
     } catch (Exception e) {

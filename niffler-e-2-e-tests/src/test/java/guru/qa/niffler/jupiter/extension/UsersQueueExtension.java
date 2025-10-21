@@ -1,7 +1,7 @@
 package guru.qa.niffler.jupiter.extension;
 
 import guru.qa.niffler.jupiter.annotation.UserType;
-import guru.qa.niffler.model.StaticUser;
+import guru.qa.niffler.model.user.StaticUser;
 import io.qameta.allure.Allure;
 import java.util.Date;
 import java.util.HashMap;
