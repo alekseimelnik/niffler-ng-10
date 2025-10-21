@@ -32,7 +32,12 @@ public class UserAuthDbClient implements UserAuthClient {
             connection -> {
               AuthUserDaoJdbc authUserDaoJdbc = new AuthUserDaoJdbc(connection);
               userAuthEntity.setId(authUserDaoJdbc.registerUser(userAuthEntity).getId());
-              userAuthEntity.setPassword(pe.encode(userAuthEntity.getPassword()));
+              userAuthEntity.setUsername(userAuthJson.username());
+              userAuthEntity.setPassword(pe.encode(userAuthJson.password()));
+              userAuthEntity.setEnabled(userAuthJson.enabled());
+              userAuthEntity.setAccountNonExpired(userAuthJson.accountNonExpired());
+              userAuthEntity.setAccountNonLocked(userAuthJson.accountNonLocked());
+              userAuthEntity.setCredentialsNonExpired(userAuthJson.credentialsNonExpired());
             }, CFG.authJdbcUrl()
         ),
         new XaConsumer(
